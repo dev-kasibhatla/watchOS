@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical">
 
     <me.khrystal.library.widget.CircleRecyclerView
@@ -12,12 +13,34 @@
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:verticalScrollbarPosition="right"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fileLinearLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/fileLinearLayout"
+        android:layout_width="34dp"
+        android:layout_height="0dp"
+        android:background="#FF0000"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.363">
+
+        <ImageButton
+            android:id="@+id/imageBackButton"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:background="#002196F3"
+            android:clickable="true"
+            android:onClick="btnBackPressed" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
