@@ -1,5 +1,6 @@
 package kasibhatla.dev.watchOS;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
@@ -12,10 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +46,8 @@ public class FileActivity extends AppCompatActivity {
     private static final String TAG = "file-activity";
     File rootFile = Environment.getExternalStorageDirectory();
 
-
+    ImageButton imageBackButton;
+   // LinearLayout fileLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,7 @@ public class FileActivity extends AppCompatActivity {
         mCircleRecyclerView =  findViewById(R.id.recycleFile);
         mItemViewMode = new CircularViewMode();
         mLayoutManager = new LinearLayoutManager(this);
+        imageBackButton = findViewById(R.id.imageBackButton);
         //startRecyclerView();
         File appPath = new File(rootFile , "/Android/data/kasibhatla.dev.watchOS");
         if(!appPath.exists()){
@@ -65,6 +71,11 @@ public class FileActivity extends AppCompatActivity {
         upFile = appPath;
 
         startCircularRecycler();
+        Glide.clear(imageBackButton);
+        Glide.with(FileActivity.this)
+                    .load(R.drawable.button_back)
+                    .bitmapTransform(new CropCircleTransformation(FileActivity.this))
+                    .into(imageBackButton);
 
     }
 
@@ -107,16 +118,25 @@ public class FileActivity extends AppCompatActivity {
 
         mCircleRecyclerView.removeOnItemTouchListener(recyclerTouchListener);
         recyclerTouchListener = new RecyclerTouchListener(FileActivity.this,
-                mCircleRecyclerView, new RecyclerTouchListener.ClickListener() {
+        mCircleRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int i) {
                 File t = currList[i];
                 if(t.isDirectory()){
-                    Toast.makeText(FileActivity.this, t.getName()+" pressed", Toast.LENGTH_SHORT).show();
-                    currList = t.listFiles();
+                   // Toast.makeText(FileActivity.this, t.getName()+" pressed", Toast.LENGTH_SHORT).show();
+                    if(t.list().length == 0){
+                        //folder is empty
+                        currList = new File[1];
+                        currList[0] = upFile;
+                    }else {
+                        currList = t.listFiles();
+                    }
                     setOnTouchListener();
                 }else{
-                    Toast.makeText(FileActivity.this, "This is a file", Toast.LENGTH_SHORT).show();
+                    if(t.getAbsolutePath().equals(upFile.getAbsolutePath())){
+                        Log.i(TAG,"CLicked empty");
+                    }
+                    Toast.makeText(FileActivity.this, "Can't open (yet)", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -128,19 +148,33 @@ public class FileActivity extends AppCompatActivity {
         mCircleRecyclerView.addOnItemTouchListener(recyclerTouchListener);
     }
 
+    public void btnBackPressed(View v){
+        if(! (currList[0].getParentFile().getAbsolutePath().equals(rootFile+""))) {
+            currList = currList[1].getParentFile().getParentFile().listFiles();
+            setOnTouchListener();
+        }else{
+            //Toast.makeText(FileActivity.this, "already root", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     class A extends RecyclerView.Adapter<VH> {
 
         @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
             VH h = null;
-            if (mCircleRecyclerView.getLayoutManager().canScrollHorizontally()) {
+
+            //useful if you want to change views
+
+            /*if (mCircleRecyclerView.getLayoutManager().canScrollHorizontally()) {
                 h = new VH(LayoutInflater.from(FileActivity.this)
                         .inflate(R.layout.item_h, parent, false));
             } else if (mCircleRecyclerView.getLayoutManager().canScrollVertically()) {
-                if (mItemViewMode instanceof CircularViewMode)
-                    h = new VH(LayoutInflater.from(FileActivity.this)
-                            .inflate(R.layout.item_c_v, parent, false));
+                if (mItemViewMode instanceof CircularViewMode) {
+
+                    Log.i(TAG, "using item_h");
+                }
+
                 else if (mItemViewMode instanceof CircularViewRTLMode)
                     h = new VH(LayoutInflater.from(FileActivity.this)
                             .inflate(R.layout.item_c_rtl_v, parent, false));
@@ -151,22 +185,33 @@ public class FileActivity extends AppCompatActivity {
                 else
                     h = new VH(LayoutInflater.from(FileActivity.this)
                             .inflate(R.layout.item_v, parent, false));
-            }
-
-
-
+            }*/
+            h = new VH(LayoutInflater.from(FileActivity.this)
+                    .inflate(R.layout.item_c_v, parent, false));
             return h;
         }
 
         @Override
         public void onBindViewHolder(VH holder, int i) {
             holder.tv.setTextSize(15);
-            holder.tv.setText(currList[i].getName());
-            /*Glide.with(getContext())
-                    .load(mImgList.get(position % mImgList.size()))
-                    .bitmapTransform(new CropCircleTransformation(getContext()))
-                    .into(holder.iv);
-*/
+            if(currList[i] == upFile){
+                holder.tv.setText("Empty folder");
+            }else {
+                holder.tv.setText(currList[i].getName());
+            }
+
+            if(currList[i].isDirectory()){
+                Glide.with(FileActivity.this)
+                        .load(R.drawable.folder_icon)
+                        .bitmapTransform(new CropCircleTransformation(FileActivity.this))
+                        .into(holder.iv);
+            }else{
+                Glide.with(FileActivity.this)
+                        .load(R.drawable.file_icon)
+                        .bitmapTransform(new CropCircleTransformation(FileActivity.this))
+                        .into(holder.iv);
+            }
+
         }
 
         @Override
@@ -183,8 +228,8 @@ public class FileActivity extends AppCompatActivity {
 
         public VH(View itemView) {
             super(itemView);
-            tv = (TextView) itemView.findViewById(R.id.item_text);
-           // iv = (ImageView) itemView.findViewById(R.id.item_img);
+            tv = itemView.findViewById(R.id.item_text);
+            iv = itemView.findViewById(R.id.item_img);
         }
     }
 }
