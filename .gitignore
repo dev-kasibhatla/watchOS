@@ -33,6 +33,15 @@ captures/
 
 \.idea/caches/
 
+<<<<<<< Updated upstream
 \.idea/
 
+=======
+\.idea/libraries/
+
+\.idea/
+
+app/app\.iml
+
+>>>>>>> Stashed changes
 *.iml
