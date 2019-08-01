@@ -1,8 +1,8 @@
 package me.khrystal.library.widget;
 
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 
 /**
@@ -14,7 +14,7 @@ import android.view.View;
  */
 public class CircularViewMode implements ItemViewMode {
 
-    private int mCircleOffset = 500;
+    private int mCircleOffset = 4000;
     private float mDegToRad = 1.0f / 180.0f * (float) Math.PI;
     private float mScalingRatio = 0.001f;
     private float mTranslationRatio = 0.09f;
