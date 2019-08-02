@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -46,8 +47,14 @@ public class FileActivity extends AppCompatActivity {
     private static final String TAG = "file-activity";
     File rootFile = Environment.getExternalStorageDirectory();
 
+    LinearLayout linearLayout;
+
     ImageButton imageBackButton;
-   // LinearLayout fileLinearLayout;
+
+    File currPath;
+
+    private static final char MODE_FILE='f', MODE_FOLDER='d';
+    private static final int LINEAR_LAYOUT_SMALL = 40;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,29 +65,37 @@ public class FileActivity extends AppCompatActivity {
     }
 
     protected void initializeParameters(){
-       // getSupportActionBar().hide();
         mCircleRecyclerView =  findViewById(R.id.recycleFile);
         mItemViewMode = new CircularViewMode();
         mLayoutManager = new LinearLayoutManager(this);
         imageBackButton = findViewById(R.id.imageBackButton);
-        //startRecyclerView();
+        linearLayout = findViewById(R.id.fileLinearLayout);
         File appPath = new File(rootFile , "/Android/data/kasibhatla.dev.watchOS");
         if(!appPath.exists()){
             appPath.mkdir();
         }
-        upFile = appPath;
+
+        upFile = new File(appPath,"upFile");
+        if(!upFile.exists()) {
+            Log.i(TAG, "upfile doesn't exist");
+            FileOutputStream os;
+            try {
+                os = new FileOutputStream(upFile);
+                os.write("up".getBytes());
+                os.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         startCircularRecycler();
         Glide.clear(imageBackButton);
         Glide.with(FileActivity.this)
-                    .load(R.drawable.button_back)
+                    .load(R.drawable.back_3d)
                     .bitmapTransform(new CropCircleTransformation(FileActivity.this))
                     .into(imageBackButton);
 
     }
-
-
-   // ArrayList<String> fileNames = new ArrayList<>();
 
     File[] currList;
     protected void startCircularRecycler(){
@@ -92,18 +107,8 @@ public class FileActivity extends AppCompatActivity {
 
         //get a file list
         currList = rootFile.listFiles();
-        //get an arraylist
-        /*for(File f:currList){
-            fileNames.add(f.getName());
-        }*/
-        //mCircleRecyclerView.setAdapter(new A());
+        currPath = rootFile;
 
-       /* mCircleRecyclerView.setOnCenterItemClickListener(new CircleRecyclerView.OnCenterItemClickListener() {
-            @Override
-            public void onCenterItemClick(View v) {
-                Toast.makeText(FileActivity.this, "Center clicked", Toast.LENGTH_SHORT).show();
-            }
-        });*/
        setOnTouchListener();
 
 
@@ -121,15 +126,19 @@ public class FileActivity extends AppCompatActivity {
         mCircleRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int i) {
+
                 File t = currList[i];
                 if(t.isDirectory()){
                    // Toast.makeText(FileActivity.this, t.getName()+" pressed", Toast.LENGTH_SHORT).show();
+                    currPath = t.getParentFile();
+                    //Log.i(TAG,"currpath: " + currPath+"");
                     if(t.list().length == 0){
                         //folder is empty
                         currList = new File[1];
                         currList[0] = upFile;
                     }else {
                         currList = t.listFiles();
+                        Log.i(TAG,"opened: " + t.getAbsolutePath());
                     }
                     setOnTouchListener();
                 }else{
@@ -141,19 +150,42 @@ public class FileActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onLongClick(View view, int position) {
-
+            public void onLongClick(View view, int i) {
+                File t = currList[i];
+                if(t.isDirectory()){
+                    showFileOptions(MODE_FOLDER);
+                }else{
+                    if(t.getAbsolutePath().equals(upFile.getAbsolutePath())){
+                        Log.i(TAG,"CLicked empty");
+                    }
+                    Toast.makeText(FileActivity.this, "Can't open (yet)", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         mCircleRecyclerView.addOnItemTouchListener(recyclerTouchListener);
     }
 
+    protected void showFileOptions(char mode){
+        ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        linearLayout.setLayoutParams(layoutParams);
+
+        switch (mode){
+            case MODE_FOLDER:
+                break;
+            case MODE_FILE:
+                break;
+        }
+    }
+
     public void btnBackPressed(View v){
-        if(! (currList[0].getParentFile().getAbsolutePath().equals(rootFile+""))) {
-            currList = currList[1].getParentFile().getParentFile().listFiles();
+        if(!currPath.getAbsolutePath().equals(rootFile.getParentFile().getAbsolutePath())) {
+            currList = currPath.listFiles();
+            currPath = currPath.getParentFile();
             setOnTouchListener();
         }else{
-            //Toast.makeText(FileActivity.this, "already root", Toast.LENGTH_SHORT).show();
+            //Log.i(TAG,"already root");
+
         }
     }
 
@@ -162,31 +194,7 @@ public class FileActivity extends AppCompatActivity {
 
         @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            VH h = null;
-
-            //useful if you want to change views
-
-            /*if (mCircleRecyclerView.getLayoutManager().canScrollHorizontally()) {
-                h = new VH(LayoutInflater.from(FileActivity.this)
-                        .inflate(R.layout.item_h, parent, false));
-            } else if (mCircleRecyclerView.getLayoutManager().canScrollVertically()) {
-                if (mItemViewMode instanceof CircularViewMode) {
-
-                    Log.i(TAG, "using item_h");
-                }
-
-                else if (mItemViewMode instanceof CircularViewRTLMode)
-                    h = new VH(LayoutInflater.from(FileActivity.this)
-                            .inflate(R.layout.item_c_rtl_v, parent, false));
-                else if (mItemViewMode instanceof CircularHorizontalBTTMode) {
-                    h = new VH(LayoutInflater.from(FileActivity.this)
-                            .inflate(R.layout.item_h_btt, parent, false));
-                }
-                else
-                    h = new VH(LayoutInflater.from(FileActivity.this)
-                            .inflate(R.layout.item_v, parent, false));
-            }*/
-            h = new VH(LayoutInflater.from(FileActivity.this)
+            VH h = new VH(LayoutInflater.from(FileActivity.this)
                     .inflate(R.layout.item_c_v, parent, false));
             return h;
         }
