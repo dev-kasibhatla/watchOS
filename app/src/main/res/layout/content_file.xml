@@ -15,6 +15,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:background="#000000"
         android:verticalScrollbarPosition="right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fileLinearLayout"
@@ -23,23 +24,104 @@
 
     <LinearLayout
         android:id="@+id/fileLinearLayout"
-        android:layout_width="34dp"
+        android:layout_width="50dp"
         android:layout_height="0dp"
-        android:background="#FF0000"
+        android:background="#000000"
         android:gravity="center"
         android:orientation="vertical"
+        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.363">
 
+        <ScrollView
+            android:id="@+id/fileScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:visibility="gone"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/file_scroll_constraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#000000">
+
+                <TextView
+                    android:id="@+id/txtShowFileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#000000"
+                    android:text="file_name"
+                    android:textAlignment="center"
+                    android:textColor="#D1D0D0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/imageCopyButton"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="#000000"
+                    app:layout_constraintEnd_toStartOf="@+id/imageDeleteButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtShowFileName" />
+
+                <ImageButton
+                    android:id="@+id/imageDeleteButton"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="32dp"
+                    android:background="#000000"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageCopyButton"
+                    app:layout_constraintTop_toBottomOf="@+id/txtShowFileName" />
+
+                <ImageButton
+                    android:id="@+id/imagePasteButton"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="#000000"
+                    app:layout_constraintEnd_toStartOf="@+id/imageNewFolderButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageCopyButton" />
+
+                <ImageButton
+                    android:id="@+id/imageNewFolderButton"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="32dp"
+                    android:background="#000000"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imagePasteButton"
+                    app:layout_constraintTop_toBottomOf="@+id/imageDeleteButton" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
         <ImageButton
             android:id="@+id/imageBackButton"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:background="#002196F3"
-            android:clickable="true"
-            android:onClick="btnBackPressed" />
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:onClick="btnBackPressed"
+            android:visibility="visible"
+            android:background="@drawable/button_common_background"/>
 
     </LinearLayout>
 
