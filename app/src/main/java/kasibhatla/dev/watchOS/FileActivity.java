@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,9 +18,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,11 +53,19 @@ public class FileActivity extends AppCompatActivity {
     LinearLayout linearLayout;
 
     ImageButton imageBackButton;
-
+    ImageButton[] imageButtons;
     File currPath;
 
     private static final char MODE_FILE='f', MODE_FOLDER='d';
-    private static final int LINEAR_LAYOUT_SMALL = 40;
+    private int LINEAR_LAYOUT_SMALL = 80;
+
+    private final Integer[] optionImages = {
+            R.drawable.button_copy,
+            R.drawable.button_paste,
+            R.drawable.delete_final,
+            R.drawable.new_folder
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +81,14 @@ public class FileActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         imageBackButton = findViewById(R.id.imageBackButton);
         linearLayout = findViewById(R.id.fileLinearLayout);
+        imageButtons = new ImageButton[]{
+                findViewById(R.id.imageCopyButton),
+                findViewById(R.id.imagePasteButton),
+                findViewById(R.id.imageDeleteButton),
+                findViewById(R.id.imageNewFolderButton)
+        };
+
+
         File appPath = new File(rootFile , "/Android/data/kasibhatla.dev.watchOS");
         if(!appPath.exists()){
             appPath.mkdir();
@@ -153,7 +172,7 @@ public class FileActivity extends AppCompatActivity {
             public void onLongClick(View view, int i) {
                 File t = currList[i];
                 if(t.isDirectory()){
-                    showFileOptions(MODE_FOLDER);
+                    showFileOptions(MODE_FOLDER,t);
                 }else{
                     if(t.getAbsolutePath().equals(upFile.getAbsolutePath())){
                         Log.i(TAG,"CLicked empty");
@@ -165,10 +184,55 @@ public class FileActivity extends AppCompatActivity {
         mCircleRecyclerView.addOnItemTouchListener(recyclerTouchListener);
     }
 
-    protected void showFileOptions(char mode){
+    protected void showFileOptions(char mode, File selection){
+        //expand linearlayout
         ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
+        LINEAR_LAYOUT_SMALL = linearLayout.getWidth();
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
         linearLayout.setLayoutParams(layoutParams);
+
+
+
+        //make scrollview visible
+        final ScrollView scrollView = findViewById(R.id.fileScrollView);
+        scrollView.setVisibility(View.VISIBLE);
+
+        TextView tv = findViewById(R.id.txtShowFileName);
+        tv.setText(selection.getName());
+
+        //glide like a boss
+        for(int i=0;i<imageButtons.length;i++){
+            Glide.with(FileActivity.this)
+                    .load(optionImages[i])
+                    .bitmapTransform(new CropCircleTransformation(FileActivity.this))
+                    .into(imageButtons[i]);
+        }
+
+        //set new meaning to the back button
+        imageBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scrollView.setVisibility(View.GONE);
+
+                //make it small again
+                ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
+                layoutParams.width = LINEAR_LAYOUT_SMALL;
+                linearLayout.setLayoutParams(layoutParams);
+
+                //set old meaning
+                imageBackButton.setOnClickListener(new View.OnClickListener(){
+
+                    @Override
+                    public void onClick(View view) {
+                        if(!currPath.getAbsolutePath().equals(rootFile.getParentFile().getAbsolutePath())) {
+                            currList = currPath.listFiles();
+                            currPath = currPath.getParentFile();
+                            setOnTouchListener();
+                        }
+                    }
+                });
+            }
+        });
 
         switch (mode){
             case MODE_FOLDER:
@@ -183,9 +247,6 @@ public class FileActivity extends AppCompatActivity {
             currList = currPath.listFiles();
             currPath = currPath.getParentFile();
             setOnTouchListener();
-        }else{
-            //Log.i(TAG,"already root");
-
         }
     }
 
