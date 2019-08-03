@@ -1,6 +1,8 @@
 package kasibhatla.dev.watchOS;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,11 +75,13 @@ public class FileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_file);
 
-        initializeParameters();
+        //initializeParameters();
+        new StartBackground(this).execute();
+
     }
 
     protected void initializeParameters(){
-        mCircleRecyclerView =  findViewById(R.id.recycleFile);
+        //mCircleRecyclerView =  findViewById(R.id.recycleFile);
         mItemViewMode = new CircularViewMode();
         mLayoutManager = new LinearLayoutManager(this);
         imageBackButton = findViewById(R.id.imageBackButton);
@@ -107,12 +112,6 @@ public class FileActivity extends AppCompatActivity {
             }
         }
 
-        startCircularRecycler();
-        Glide.clear(imageBackButton);
-        Glide.with(FileActivity.this)
-                    .load(R.drawable.back_3d)
-                    .bitmapTransform(new CropCircleTransformation(FileActivity.this))
-                    .into(imageBackButton);
 
     }
 
@@ -301,4 +300,54 @@ public class FileActivity extends AppCompatActivity {
             iv = itemView.findViewById(R.id.item_img);
         }
     }
+
+    //todo: inplement asynctask for initial load
+
+
+
+    class StartBackground extends AsyncTask<String ,Void,Void> {
+
+        private Context context;
+        private PowerManager.WakeLock mWakeLock;
+
+
+        public StartBackground(Context c){
+            this.context=c;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            Log.i(TAG,"Starting load");
+
+        }
+
+        protected Void doInBackground(String... strings) {
+            initializeParameters();
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void a){
+            //remove waiting text and expand recyclerview
+            TextView t = findViewById(R.id.txtFilePleaseWait);
+            t.setVisibility(View.GONE);
+
+            mCircleRecyclerView =  findViewById(R.id.recycleFile);
+            ViewGroup.LayoutParams lp = mCircleRecyclerView.getLayoutParams();
+            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            mCircleRecyclerView.setLayoutParams(lp);
+            Log.i(TAG,"Done with load");
+
+            startCircularRecycler();
+            Glide.clear(imageBackButton);
+            Glide.with(FileActivity.this)
+                    .load(R.drawable.back_3d)
+                    .bitmapTransform(new CropCircleTransformation(FileActivity.this))
+                    .into(imageBackButton);
+
+        }
+    }
+
+
 }

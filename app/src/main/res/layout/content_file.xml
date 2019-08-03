@@ -10,7 +10,7 @@
     <me.khrystal.library.widget.CircleRecyclerView
         android:id="@+id/recycleFile"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="1dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -124,5 +124,22 @@
             android:background="@drawable/button_common_background"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtFilePleaseWait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Please Wait"
+        android:textColor="#2196F3"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/fileLinearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

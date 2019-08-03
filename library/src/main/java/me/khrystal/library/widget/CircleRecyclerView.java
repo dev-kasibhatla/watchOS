@@ -141,8 +141,11 @@ public class CircleRecyclerView extends RecyclerView implements View.OnClickList
 
     public void smoothScrollToView(View v) {
         int distance = 0;
-        if (getLayoutManager() instanceof LinearLayoutManager) {
-            if (getLayoutManager().canScrollVertically()) {
+        final float y = v.getY() + v.getHeight() * 0.5f;
+        final float halfHeight = getHeight() * 0.5f;
+        distance = (int) (y - halfHeight);
+        /*if (getLayoutManager() instanceof LinearLayoutManager) {
+            *//*if (getLayoutManager().canScrollVertically()) {
                 final float y = v.getY() + v.getHeight() * 0.5f;
                 final float halfHeight = getHeight() * 0.5f;
                 distance = (int) (y - halfHeight);
@@ -150,10 +153,13 @@ public class CircleRecyclerView extends RecyclerView implements View.OnClickList
                 final float x = v.getX() + v.getWidth() * 0.5f;
                 final float halfWidth = getWidth() * 0.5f;
                 distance = (int) (x - halfWidth);
-            }
+            }*//*
+            final float y = v.getY() + v.getHeight() * 0.5f;
+            final float halfHeight = getHeight() * 0.5f;
+            distance = (int) (y - halfHeight);
 
         } else
-            throw new IllegalArgumentException("CircleRecyclerView just support T extend LinearLayoutManager!");
+            throw new IllegalArgumentException("CircleRecyclerView just support T extend LinearLayoutManager!");*/
         smoothScrollBy(distance,distance);
     }
 
@@ -204,12 +210,12 @@ public class CircleRecyclerView extends RecyclerView implements View.OnClickList
     }
 
     public View findViewAtCenter() {
-        if (getLayoutManager().canScrollVertically()) {
+        /*if (getLayoutManager().canScrollVertically()) {
             return findViewAt(0, getHeight() / 2);
         }else if (getLayoutManager().canScrollHorizontally()) {
             return findViewAt(getWidth() / 2, 0);
-        }
-        return null;
+        }*/
+        return findViewAt(0, getHeight() / 2);
     }
 
     @Override
