@@ -81,9 +81,7 @@ public class FileActivity extends AppCompatActivity {
     }
 
     protected void initializeParameters(){
-        //mCircleRecyclerView =  findViewById(R.id.recycleFile);
-        mItemViewMode = new CircularViewMode();
-        mLayoutManager = new LinearLayoutManager(this);
+
         imageBackButton = findViewById(R.id.imageBackButton);
         linearLayout = findViewById(R.id.fileLinearLayout);
         imageButtons = new ImageButton[]{
@@ -117,17 +115,17 @@ public class FileActivity extends AppCompatActivity {
 
     File[] currList;
     protected void startCircularRecycler(){
-        mCircleRecyclerView.setLayoutManager(mLayoutManager);
+        /*mCircleRecyclerView.setLayoutManager(mLayoutManager);
         mCircleRecyclerView.setViewMode(mItemViewMode);
         mCircleRecyclerView.setNeedCenterForce(true);
 
-        mCircleRecyclerView.setNeedLoop(false);
+        mCircleRecyclerView.setNeedLoop(false);*/
 
         //get a file list
         currList = rootFile.listFiles();
         currPath = rootFile;
 
-       setOnTouchListener();
+       //setOnTouchListener();
 
 
     }
@@ -301,7 +299,6 @@ public class FileActivity extends AppCompatActivity {
         }
     }
 
-    //todo: inplement asynctask for initial load
 
 
 
@@ -318,11 +315,18 @@ public class FileActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute(){
             Log.i(TAG,"Starting load");
-
+            mCircleRecyclerView =  findViewById(R.id.recycleFile);
+            mLayoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL,false);
+            mCircleRecyclerView.setLayoutManager(mLayoutManager);
+            mItemViewMode = new CircularViewMode();
+            mCircleRecyclerView.setViewMode(mItemViewMode);
+            mCircleRecyclerView.setNeedCenterForce(true);
+            mCircleRecyclerView.setNeedLoop(false);
         }
 
         protected Void doInBackground(String... strings) {
             initializeParameters();
+            startCircularRecycler();
             return null;
         }
 
@@ -333,18 +337,17 @@ public class FileActivity extends AppCompatActivity {
             TextView t = findViewById(R.id.txtFilePleaseWait);
             t.setVisibility(View.GONE);
 
-            mCircleRecyclerView =  findViewById(R.id.recycleFile);
-            ViewGroup.LayoutParams lp = mCircleRecyclerView.getLayoutParams();
-            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            mCircleRecyclerView.setLayoutParams(lp);
             Log.i(TAG,"Done with load");
 
-            startCircularRecycler();
+            mCircleRecyclerView.setVisibility(View.VISIBLE);
+
+            setOnTouchListener();
             Glide.clear(imageBackButton);
             Glide.with(FileActivity.this)
                     .load(R.drawable.back_3d)
                     .bitmapTransform(new CropCircleTransformation(FileActivity.this))
                     .into(imageBackButton);
+
 
         }
     }
