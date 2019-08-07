@@ -2,21 +2,36 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    android:orientation="vertical">
+    android:gravity="center_horizontal|center_vertical">
+
+    <TextView
+        android:id="@+id/txtFilePleaseWait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Please Wait"
+        android:textColor="#2196F3"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <me.khrystal.library.widget.CircleRecyclerView
         android:id="@+id/recycleFile"
         android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:background="#000000"
         android:verticalScrollbarPosition="right"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fileLinearLayout"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,8 +39,9 @@
 
     <LinearLayout
         android:id="@+id/fileLinearLayout"
-        android:layout_width="50dp"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:background="#000000"
         android:gravity="center"
         android:orientation="vertical"
@@ -33,14 +49,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.363">
+        app:layout_constraintVertical_bias="0.477">
 
         <ScrollView
             android:id="@+id/fileScrollView"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:visibility="gone"
-            >
+            android:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/file_scroll_constraint"
@@ -119,27 +134,10 @@
             android:id="@+id/imageBackButton"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:background="@drawable/button_common_background"
             android:onClick="btnBackPressed"
-            android:visibility="visible"
-            android:background="@drawable/button_common_background"/>
+            android:visibility="visible" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/txtFilePleaseWait"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Please Wait"
-        android:textColor="#2196F3"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/fileLinearLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
