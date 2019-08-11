@@ -1,5 +1,6 @@
 package kasibhatla.dev.watchOS;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -58,5 +59,39 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for(int i=0;i<imageButtons.length;i++){
+            Glide.clear(imageButtons[i]);
+            Glide.with(MainActivity.this)
+                    .load(iconSet[i])
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .into(imageButtons[i]);
+        }
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        for(int i=0;i<imageButtons.length;i++){
+            Glide.clear(imageButtons[i]);
+            Glide.with(MainActivity.this)
+                    .load(iconSet[i])
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .into(imageButtons[i]);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        for(int i=0;i<imageButtons.length;i++){
+            Glide.clear(imageButtons[i]);
+            Glide.with(MainActivity.this)
+                    .load(iconSet[i])
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .into(imageButtons[i]);
+        }
+    }
 }
